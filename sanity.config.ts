@@ -12,10 +12,6 @@ import {structureTool} from 'sanity/structure'
 import {apiVersion, dataset, projectId} from './sanity/env'
 import {schema} from './sanity/schemaTypes'
 import {structure} from './sanity/structure'
-import {qrCodePlugin} from './sanity/plugins/qr-code-plugin'
-
-// Base URL para los redirects (cambiar en producción)
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
 
 export default defineConfig({
   basePath: '/studio',
