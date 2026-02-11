@@ -34,8 +34,9 @@ export async function POST(request: NextRequest) {
       errorCorrectionLevel: 'M',
     })
 
-    // Convertir buffer a blob
-    const blob = new Blob([qrBuffer], { type: 'image/png' })
+    // Convertir buffer a Uint8Array y luego a blob
+    const uint8Array = new Uint8Array(qrBuffer)
+    const blob = new Blob([uint8Array], { type: 'image/png' })
 
     // Subir a Sanity
     const asset = await writeClient.assets.upload('image', blob, {
