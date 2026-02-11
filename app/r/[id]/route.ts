@@ -45,7 +45,10 @@ export async function GET(
   try {
     const { id } = await params
 
-    // Consultar documento en Sanity
+    // Limpiar el ID si viene con prefijo drafts.
+    const cleanId = id.startsWith('drafts.') ? id.replace('drafts.', '') : id
+    
+    // Consultar documento en Sanity (solo documentos publicados)
     const query = `*[_id == $id && !(_id in path("drafts.**"))][0]{
       _id,
       title,
@@ -53,7 +56,7 @@ export async function GET(
       "slug": slug.current
     }`
     
-    const document = await fetchFromSanity(query, { id })
+    const document = await fetchFromSanity(query, { id: cleanId })
 
     if (!document) {
       return NextResponse.json(

@@ -15,12 +15,31 @@ export function QrCodeFieldInput(props: any) {
     setIsGenerating(true)
     try {
       // Obtener el ID del documento
-      const docId = documentId || props.id || props.document?._id
+      let docId = documentId || props.id || props.document?._id
       
       if (!docId) {
         alert('No se pudo obtener el ID del documento')
         setIsGenerating(false)
         return
+      }
+
+      // Si el documento está en draft, publicarlo primero
+      if (docId.startsWith('drafts.')) {
+        try {
+          await publish.execute()
+          // Esperar un poco para que se publique
+          await new Promise(resolve => setTimeout(resolve, 1000))
+          // Obtener el ID publicado (sin drafts.)
+          docId = docId.replace('drafts.', '')
+        } catch (error) {
+          console.error('Error al publicar:', error)
+          alert('Error al publicar el documento. Asegúrate de que esté publicado antes de generar el QR.')
+          setIsGenerating(false)
+          return
+        }
+      } else {
+        // Si ya está publicado, asegurarse de que no tenga el prefijo drafts.
+        docId = docId.replace('drafts.', '')
       }
 
       const baseUrl = typeof window !== 'undefined' 
