@@ -1,6 +1,5 @@
 import { client } from '@/sanity/lib/client'
 import { notFound } from 'next/navigation'
-import Image from 'next/image'
 
 interface ContentPageProps {
   params: Promise<{
@@ -58,13 +57,10 @@ export default async function ContentPage({ params }: ContentPageProps) {
         {/* Mostrar contenido según el tipo */}
         {document.contentType === 'image' && document.imageFile?.asset?.url && (
           <div className="w-full">
-            <Image
+            <img
               src={document.imageFile.asset.url}
               alt={document.title || 'Imagen'}
-              width={1200}
-              height={800}
               className="w-full h-auto"
-              priority
             />
           </div>
         )}
