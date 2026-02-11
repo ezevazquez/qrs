@@ -9,12 +9,13 @@ export function QrCodeFieldInput(props: any) {
   const [isGenerating, setIsGenerating] = useState(false)
   const qrCode = props.value
   const documentId = useFormValue(['_id']) as string
+  const publishedId = useFormValue(['_id']) as string | undefined
   const { patch, publish } = useDocumentOperation(props.id || documentId, props.type)
 
   const handleGenerateQR = async () => {
     setIsGenerating(true)
     try {
-      // Obtener el ID del documento
+      // Obtener el ID del documento - siempre usar el ID sin prefijo drafts.
       let docId = documentId || props.id || props.document?._id
       
       if (!docId) {
@@ -23,24 +24,8 @@ export function QrCodeFieldInput(props: any) {
         return
       }
 
-      // Si el documento está en draft, publicarlo primero
-      if (docId.startsWith('drafts.')) {
-        try {
-          await publish.execute()
-          // Esperar un poco para que se publique
-          await new Promise(resolve => setTimeout(resolve, 1000))
-          // Obtener el ID publicado (sin drafts.)
-          docId = docId.replace('drafts.', '')
-        } catch (error) {
-          console.error('Error al publicar:', error)
-          alert('Error al publicar el documento. Asegúrate de que esté publicado antes de generar el QR.')
-          setIsGenerating(false)
-          return
-        }
-      } else {
-        // Si ya está publicado, asegurarse de que no tenga el prefijo drafts.
-        docId = docId.replace('drafts.', '')
-      }
+      // Siempre quitar el prefijo drafts. - el QR debe apuntar al documento publicado
+      docId = docId.replace(/^drafts\./, '')
 
       const baseUrl = typeof window !== 'undefined' 
         ? window.location.origin.replace(':3333', ':3000')

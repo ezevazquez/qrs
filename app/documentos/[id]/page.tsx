@@ -4,13 +4,16 @@ import Image from 'next/image'
 
 interface DocumentPageProps {
   params: Promise<{
-    slug: string
+    id: string
   }>
 }
 
-async function getDocument(slug: string) {
+async function getDocument(id: string) {
+  // Limpiar el ID si viene con prefijo drafts.
+  const cleanId = id.startsWith('drafts.') ? id.replace('drafts.', '') : id
+  
   const document = await client.fetch(
-    `*[_type == "content" && slug.current == $slug && !(_id in path("drafts.**"))][0]{
+    `*[_type == "content" && _id == $id && !(_id in path("drafts.**"))][0]{
       _id,
       title,
       contentType,
@@ -38,15 +41,15 @@ async function getDocument(slug: string) {
       qrCode,
       "qrCodeUrl": qrCode.asset->url
     }`,
-    { slug }
+    { id: cleanId }
   )
 
   return document
 }
 
 export default async function DocumentPage({ params }: DocumentPageProps) {
-  const { slug } = await params
-  const document = await getDocument(slug)
+  const { id } = await params
+  const document = await getDocument(id)
 
   if (!document) {
     notFound()

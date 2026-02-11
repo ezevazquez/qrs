@@ -51,9 +51,7 @@ export async function GET(
     // Consultar documento en Sanity (solo documentos publicados)
     const query = `*[_id == $id && !(_id in path("drafts.**"))][0]{
       _id,
-      title,
-      slug,
-      "slug": slug.current
+      title
     }`
     
     const document = await fetchFromSanity(query, { id: cleanId })
@@ -65,12 +63,12 @@ export async function GET(
       )
     }
 
-    // Redirigir a la página pública del documento
+    // Redirigir a la página pública del documento usando el ID
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 
       (request.headers.get('host') 
         ? `${request.headers.get('x-forwarded-proto') || 'https'}://${request.headers.get('host')}`
         : 'http://localhost:3000')
-    const destination = `${baseUrl}/documentos/${document.slug}`
+    const destination = `${baseUrl}/documentos/${cleanId}`
 
     // Redirect 302 (temporal) para permitir cambios futuros
     return NextResponse.redirect(destination, 302)
