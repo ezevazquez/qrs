@@ -1,0 +1,9 @@
+node_modules
+.env.local
+.env
+.next/
+.vercel/
+.sanity/
+.sanity/
+
+.pnpm-store/
