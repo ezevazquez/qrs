@@ -40,10 +40,10 @@ async function fetchFromSanity(query: string, params: Record<string, any>) {
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params
+    const { id } = await params
 
     // Consultar documento en Sanity
     const query = `*[_id == $id && !(_id in path("drafts.**"))][0]{

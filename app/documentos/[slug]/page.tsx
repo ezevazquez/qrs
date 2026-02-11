@@ -3,9 +3,9 @@ import { notFound } from 'next/navigation'
 import Image from 'next/image'
 
 interface DocumentPageProps {
-  params: {
+  params: Promise<{
     slug: string
-  }
+  }>
 }
 
 async function getDocument(slug: string) {
@@ -45,7 +45,8 @@ async function getDocument(slug: string) {
 }
 
 export default async function DocumentPage({ params }: DocumentPageProps) {
-  const document = await getDocument(params.slug)
+  const { slug } = await params
+  const document = await getDocument(slug)
 
   if (!document) {
     notFound()
