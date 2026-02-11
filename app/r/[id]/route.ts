@@ -4,24 +4,22 @@ export const runtime = 'edge'
 
 const SANITY_PROJECT_ID = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID
 const SANITY_DATASET = process.env.NEXT_PUBLIC_SANITY_DATASET || 'production'
-const SANITY_API_VERSION = process.env.NEXT_PUBLIC_SANITY_API_VERSION || '2026-02-11'
+// Usar la versión de API más reciente si no está configurada
+const SANITY_API_VERSION = process.env.NEXT_PUBLIC_SANITY_API_VERSION || '2024-01-01'
 
 async function fetchFromSanity(query: string, params: Record<string, any>) {
   if (!SANITY_PROJECT_ID) {
     throw new Error('SANITY_PROJECT_ID no está configurado')
   }
   
-  // Construir la URL con parámetros en formato correcto para Sanity
-  const urlParams = new URLSearchParams({
-    query: query,
-  })
-  
-  // Agregar parámetros
+  // Construir la query con parámetros reemplazados directamente
+  let finalQuery = query
   Object.keys(params).forEach(key => {
-    urlParams.append(key, JSON.stringify(params[key]))
+    const value = JSON.stringify(params[key])
+    finalQuery = finalQuery.replace(`$${key}`, value)
   })
   
-  const url = `https://${SANITY_PROJECT_ID}.api.sanity.io/v${SANITY_API_VERSION}/data/query/${SANITY_DATASET}?${urlParams.toString()}`
+  const url = `https://${SANITY_PROJECT_ID}.api.sanity.io/v${SANITY_API_VERSION}/data/query/${SANITY_DATASET}?query=${encodeURIComponent(finalQuery)}`
   
   const response = await fetch(url, {
     headers: {
@@ -74,8 +72,15 @@ export async function GET(
     return NextResponse.redirect(destination, 302)
   } catch (error) {
     console.error('Error en redirect:', error)
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
     return NextResponse.json(
-      { error: 'Error interno del servidor' },
+      { 
+        error: 'Error interno del servidor',
+        details: errorMessage,
+        projectId: SANITY_PROJECT_ID,
+        dataset: SANITY_DATASET,
+        apiVersion: SANITY_API_VERSION
+      },
       { status: 500 }
     )
   }
