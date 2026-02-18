@@ -1,5 +1,6 @@
 import { client } from '@/sanity/lib/client'
 import { notFound } from 'next/navigation'
+import ContentViewer from './content-viewer'
 
 interface ContentPageProps {
   params: Promise<{
@@ -16,6 +17,8 @@ async function getDocument(id: string) {
       _id,
       title,
       contentType,
+      hasCode,
+      code,
       imageFile{
         asset->{
           url,
@@ -51,38 +54,5 @@ export default async function ContentPage({ params }: ContentPageProps) {
     notFound()
   }
 
-  return (
-    <main className="min-h-screen bg-white flex items-center justify-center p-4">
-      <div className="w-full max-w-4xl">
-        {/* Mostrar contenido según el tipo */}
-        {document.contentType === 'image' && document.imageFile?.asset?.url && (
-          <div className="w-full">
-            <img
-              src={document.imageFile.asset.url}
-              alt={document.title || 'Imagen'}
-              className="w-full h-auto"
-            />
-          </div>
-        )}
-        
-        {document.contentType === 'audio' && document.audioFile?.asset?.url && (
-          <div className="w-full">
-            <audio controls className="w-full">
-              <source src={document.audioFile.asset.url} />
-              Tu navegador no soporta el elemento de audio.
-            </audio>
-          </div>
-        )}
-        
-        {document.contentType === 'video' && document.videoFile?.asset?.url && (
-          <div className="w-full">
-            <video controls className="w-full">
-              <source src={document.videoFile.asset.url} />
-              Tu navegador no soporta el elemento de video.
-            </video>
-          </div>
-        )}
-      </div>
-    </main>
-  )
+  return <ContentViewer document={document} />
 }

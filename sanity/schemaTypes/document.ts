@@ -72,6 +72,31 @@ export default defineType({
       hidden: ({ parent }) => parent?.contentType !== 'video',
     }),
     defineField({
+      name: 'hasCode',
+      title: '¿Requiere código de acceso?',
+      type: 'boolean',
+      initialValue: false,
+      description: 'Si está activado, se pedirá un código de 3 dígitos para ver el contenido',
+    }),
+    defineField({
+      name: 'code',
+      title: 'Código de acceso (3 dígitos)',
+      type: 'string',
+      description: 'Código de 3 dígitos para acceder al contenido',
+      hidden: ({ parent }) => !parent?.hasCode,
+      validation: (Rule) =>
+        Rule.custom((value, context) => {
+          const parent = context.parent as any
+          if (parent?.hasCode && !value) {
+            return 'El código es requerido cuando "Requiere código de acceso" está activado'
+          }
+          if (parent?.hasCode && value && !/^\d{3}$/.test(value)) {
+            return 'El código debe tener exactamente 3 dígitos'
+          }
+          return true
+        }),
+    }),
+    defineField({
       name: 'qrCode',
       title: 'Código QR',
       type: 'image',
