@@ -101,7 +101,7 @@ export default function ContentViewer({ document }: ContentViewerProps) {
         <div className="bg-gray-50 rounded-lg p-8 shadow-lg">
           <h1 className="text-2xl font-bold text-black text-center mb-6">Código de acceso</h1>
           <p className="text-gray-600 text-center mb-6">
-            Ingresa el código de 3 dígitos para acceder</p>
+            Ingresá lo que <span>dure el silencio</span> para acceder</p>
           
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
