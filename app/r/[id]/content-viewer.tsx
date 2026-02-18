@@ -99,10 +99,9 @@ export default function ContentViewer({ document }: ContentViewerProps) {
     <main className="min-h-screen bg-white flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="bg-gray-50 rounded-lg p-8 shadow-lg">
-          <h1 className="text-2xl font-bold text-center mb-6">Código de acceso</h1>
+          <h1 className="text-2xl font-bold text-black text-center mb-6">Código de acceso</h1>
           <p className="text-gray-600 text-center mb-6">
-            Ingresa el código de 3 dígitos para ver el contenido
-          </p>
+            Ingresa el código de 3 dígitos para acceder</p>
           
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
@@ -118,7 +117,7 @@ export default function ContentViewer({ document }: ContentViewerProps) {
                   setError('')
                 }}
                 className="w-full text-center text-4xl font-bold tracking-widest border-2 border-gray-300 rounded-lg px-4 py-6 focus:outline-none focus:border-blue-500"
-                placeholder="000"
+                placeholder="***"
                 autoFocus
               />
             </div>
